@@ -1,54 +1,97 @@
 # 口播文案生成
 
-口播文案生成 是 Shin-video 口播视频工作流中的一个 Skill。
+> Shin-video AI 员工体系中的「短视频编剧」Skill。它不是孤立提示词，而是整条文章转口播视频流水线的一环。
 
-## 定位
+## 它能解决什么问题
 
-- 中文名：口播文案生成
-- 英文名：`voiceover-writer`
-- 所属场景：文章转口播
-- 工作流目标：给文章，确认口播，放入口播音频，Agent 自动生成视频。
+文章通常是书面语，直接朗读会长、硬、绕。这个 Skill 把文章改成 60-120 秒可朗读口播，保留事实主线，删除画面提示和非朗读内容。
 
-## 安装
+## 它在工作流里的位置
+
+**阶段：** 第 2 步：文章转口播
+
+**上游：**
+- web-article-cleaner
+
+**下游：**
+- audio-checker
+- whisperx-transcriber
+
+## 输入什么
+
+- 文章正文.md
+- 用户希望的视频语气、时长或重点
+
+## 输出什么
+
+- 口播文案.md
+
+## 背后由哪些能力组成
+
+这个 Skill 自身负责：
+
+- 书面语转口语
+- 压缩信息密度
+- 去除 AI 腔和分镜提示
+- 让音频模型更容易读顺
+
+它通常由 `shin-video-director` 总控调用，也可以在当前项目材料已经准备好时单独调用。
+
+## 每个 Skill 的作用
+
+在完整 AI 员工体系里，本 Skill 的职责是：**短视频编剧**。
+
+它不负责：
+
+- 不生成镜头脚本
+- 不生成 Remotion 指令
+- 不把画面说明写进口播
+
+## 演示截图 / 视频
+
+![Shin-video Demo](docs/demo/style-comparison.png)
+
+演示重点：演示截图展示原文到 300 字口播文案的变化。
+
+完整视频 Demo 建议放在总控仓库或 ThinkAI Skill 页面中展示；单个 Skill 仓库保留截图和阶段说明，避免每个子仓库重复放大视频文件。
+
+## 适合谁买
+
+需要把长文章快速改成口播短视频的人。
+
+## 下载 / 安装方式
 
 ```bash
 npx skills add https://github.com/Shinchan-crayon/voiceover-writer
 ```
 
-## 使用方式
-
-安装后，向 Agent 说明你要使用「口播文案生成」即可。
-
-示例：
+安装后，在支持 Skill 的 Agent 中说：
 
 ```text
 请使用 口播文案生成，继续处理当前 Shin-video 项目。
 ```
 
-## 输入与输出
+## 付费版本和定制服务入口
 
-请以 `SKILL.md` 为准。Shin-video v1 的统一输出规范是：
+- 免费版：安装本 Skill，按本地 Shin-video 工作流手动配置运行。
+- 付费版：可提供整套工作流安装包、环境部署协助、示例项目和远程排障。
+- 定制服务：可按行业定制口播风格、导演规则、Remotion 模板、品牌视觉系统和 ThinkAI 上架页面。
 
-```text
-文章正文.md
-口播文案.md
-口播音频.mp3
-runtime/asr.json
-runtime/scenes.json
-runtime/style-profile.json
-runtime/preview.mp4
-成品/成品.mp4
-```
+咨询入口：ThinkAI Skill 广场 / GitHub Issues / 私信定制咨询
 
-## 外部依赖
+## 验收标准
 
-本 Skill 属于 Shin-video 工作流封装。根据具体阶段，它可能调用文本模型、音频模型、WhisperX、faster-whisper、Remotion、Node.js、Python 或 FFmpeg。
+使用本 Skill 后，至少要能确认：
 
+- 已正确生成或推进到：口播文案.md
+- 没有绕过它的上游依赖。
+- 没有把本 Skill 明确不负责的事情混进来。
+- 出错时能说清楚卡在哪个输入或环境条件上。
 
 ## 能力边界
 
-- v1 不把图片链路作为必要步骤。
-- 口播文案只能包含要念出来的话。
-- 不允许在口播文案里写画面提示、分镜说明或 Remotion 指令。
-- 不能跳过 WhisperX 时间戳步骤。
-- 最终成片固定输出到 `成品/成品.mp4`。
+- 不生成镜头脚本
+- 不生成 Remotion 指令
+- 不把画面说明写进口播
+
+Shin-video 追求的是「可维护的本地视频生成工作流」，不是把所有能力塞进一个万能提示词。这个 Skill 只负责自己这一段，完整成片需要配合其它 AI 员工和本地 Shin-video 项目。
